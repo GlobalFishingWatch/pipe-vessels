@@ -1,0 +1,51 @@
+[
+  {
+    "mode": "REQUIRED",
+    "name": "seg_id",
+    "type": "STRING",
+    "description": "Unique identifier for the segment."
+  },
+  {
+    "mode": "REQUIRED",
+    "name": "seg_start",
+    "type": "timestamp",
+    "description": "Time when the segment started."
+  },
+  {
+    "mode": "REQUIRED",
+    "name": "distinct_point_count",
+    "type": "INTEGER",
+    "description": "Count of distinct individual messages that are involved in this track."
+  },
+  {
+    "mode": "REQUIRED",
+    "name": "seg_geography",
+    "type": "GEOGRAPHY",
+    "description": "MULTIPOINT containing all the latitude and longitude coordinates of this track."
+  },
+  {
+    "mode": "REPEATED",
+    "name": "times",
+    "type": "TIMESTAMP",
+    "description": "Array containing all the timestamps on each individual point in this track."
+  },
+  {
+    "mode": "REPEATED",
+    "name": "scores",
+    "type": "FLOAT64",
+    "description": "MULTIPOINT containing all the fishing scores of the messages in this track."
+  },
+  {
+    "mode": "REPEATED",
+    "name": "speeds",
+    "type": "FLOAT64",
+    "description": "MULTIPOINT containing all the speeds of the messages in this track."
+  },
+  {
+    "mode": "REPEATED",
+    "name": "courses",
+    "type": "FLOAT64",
+    "description": "MULTIPOINT containing all the courses of the messages in this track."
+  }
+]
+

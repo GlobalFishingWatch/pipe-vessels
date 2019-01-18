@@ -1,0 +1,4 @@
+-- Setup constraints and indices
+CREATE INDEX {{ table_name }}_seg_id ON public.{{ table_name }} (seg_id);
+CREATE INDEX {{ table_name }}_seg_geography_gis ON public.{{ table_name }} USING gist (seg_geography);
+
