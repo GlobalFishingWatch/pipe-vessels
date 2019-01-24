@@ -1,0 +1,4 @@
+-- Setup constraints and indices
+CREATE INDEX {{ table_name }}_seg_id ON public.{{ table_name }} (seg_id);
+CREATE INDEX {{ table_name }}_vessel_id ON public.{{ table_name }} (vessel_id);
+

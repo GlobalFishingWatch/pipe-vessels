@@ -1,0 +1,13 @@
+-- Create base tracks table
+CREATE TABLE IF NOT EXISTS public.{{ table_name }} (
+    id bigserial PRIMARY KEY NOT NULL,
+    seg_id character varying NOT NULL,
+    vessel_id character varying NOT NULL
+);
+
+-- Ensure the table is empty
+TRUNCATE public.{{ table_name }};
+
+-- Drop all constraints and indices if they exist
+DROP INDEX IF EXISTS {{ table_name }}_seg_id;
+DROP INDEX IF EXISTS {{ table_name }}_vessel_id;

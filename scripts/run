@@ -5,7 +5,8 @@ THIS_SCRIPT_DIR="$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )"
 display_usage() {
 	echo "Available Commands"
 	echo "  aggregate_tracks                   aggregate messages into tracks and publish to bigquery"
-  echo "  publish_postgres                   publish tracks from a given bigquery table to postgis"
+  echo "  publish_postgres_tracks            publish tracks from a given bigquery table to postgis"
+  echo "  publish_postgres_vessels           publish vessels from a given bigquery table to postgis"
 	}
 
 
@@ -22,8 +23,12 @@ case $1 in
     ${THIS_SCRIPT_DIR}/aggregate_tracks "${@:2}"
     ;;
 
-  publish_postgres)
-    ${THIS_SCRIPT_DIR}/publish_postgres "${@:2}"
+  publish_postgres_tracks)
+    ${THIS_SCRIPT_DIR}/publish_postgres_tracks "${@:2}"
+    ;;
+
+  publish_postgres_vessels)
+    ${THIS_SCRIPT_DIR}/publish_postgres_vessels "${@:2}"
     ;;
 
   *)
