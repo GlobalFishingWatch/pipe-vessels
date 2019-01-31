@@ -30,8 +30,6 @@ WITH
   WHERE
     lat > -90
     AND lat < 90
-    AND _TABLE_SUFFIX BETWEEN '{{ start_yyyymmdd }}'
-    AND '{{ end_yyyymmdd }}'
     ),
   ########################################################
   # Group messages by their position

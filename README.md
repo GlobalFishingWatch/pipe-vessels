@@ -29,13 +29,16 @@ The pipeline exposes the following standard settings:
 In addition to this, the following custom settings are required for this
 pipeline, and come with default values:
 
-* `pipe_vessels.scored_messages`: BigQuery table to read scored messages from, used as the source for track aggregation. Defaults to `messages_scored_`
+* `pipe_vessels.bigquery_scored_messages`: BigQuery table to read scored messages from, used as the source for track aggregation. Defaults to `messages_scored_`
+* `pipe_vessels.bigquery_segment_vessel`: BigQuery table to read segment to vessel mappings. Defaults to `segment_vessel`
+* `pipe_vessels.bigquery_tracks`: BigQuery table to write aggregated tracks into. Defaults to `tracks`
 
 Finally, the following custom entries do not provide a default value and must be manually configured before using this pipeline:
 
 * `pipe_vessels.postgres_instance`: CloudSQL postgres instance where the tracks are published to.
 * `pipe_vessels.postgres_connection_string`: Connection string for the postgres database to publish the tracks to.
-* `pipe_vessels.fishing.postgres_table`: Table in postgres to publish the tracks to.
+* `pipe_vessels.fishing.postgres_table_tracks`: Table in postgres to publish the tracks to.
+* `pipe_vessels.fishing.postgres_table_vessels`: Table in postgres to publish the segment-to-vessel mappings to.
 
 # License
 

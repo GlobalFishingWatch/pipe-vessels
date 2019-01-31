@@ -3,29 +3,22 @@ source pipe-tools-utils
 
 THIS_SCRIPT_DIR="$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )"
 ASSETS=${THIS_SCRIPT_DIR}/../assets
-# source ${THIS_SCRIPT_DIR}/pipeline.sh
+source ${THIS_SCRIPT_DIR}/pipeline.sh
 
 display_usage() {
-  echo -e "\nUsage:\n$0 YYYY-MM-DD[,YYYY-MM-DD] MESSAGES_TABLE TRACKS_TABLE\n"
+  echo -e "\nUsage:\n$0 MESSAGES_TABLE TRACKS_TABLE\n"
 }
 
-if [[ $# -ne 3  ]]
+if [[ $# -ne 2  ]]
 then
     display_usage
     exit 1
 fi
 
-DATE_RANGE=$1
-MESSAGES_TABLE=$2
-TRACKS_TABLE=$3
+MESSAGES_TABLE=$1
+TRACKS_TABLE=$2
 
-IFS=, read START_DATE END_DATE <<<"${DATE_RANGE}"
-if [[ -z $END_DATE ]]; then
-  END_DATE=${START_DATE}
-fi
-
-
-DELETE_SQL=${ASSETS}/bigquery/delete-daterange.sql.j2
+DELETE_SQL=${ASSETS}/bigquery/delete.sql.j2
 INSERT_SQL=${ASSETS}/bigquery/aggregate-tracks.sql.j2
 SCHEMA=${ASSETS}/bigquery/tracks.schema.json
 TABLE_DESC=(
@@ -53,27 +46,25 @@ if [ "$?" -ne 0 ]; then
   exit 1
 fi
 
-echo "  Deleting existing records for ${START_DATE} to ${END_DATE}"
+echo "  Deleting existing records for table ${TRACKS_TABLE}"
 
-jinja2 ${DELETE_SQL} -D table=${TRACKS_TABLE//:/.} -D start_date=${START_DATE} -D end_date=${END_DATE} \
+jinja2 ${DELETE_SQL} -D table=${TRACKS_TABLE//:/.} \
      | bq query --max_rows=0
 
 if [ "$?" -ne 0 ]; then
-  echo "  Unable to delete records for table ${TRACKS_TABLE} from ${START_DATE} to ${END_DATE}"
+  echo "  Unable to delete records for table ${TRACKS_TABLE}"
   exit 1
 fi
 
-echo "  Inserting new records for ${START_DATE} to ${END_DATE}"
+echo "  Inserting new records for table ${TRACKS_TABLE}"
 
 jinja2 ${INSERT_SQL} \
    -D source=${MESSAGES_TABLE//:/.} \
    -D dest=${TRACKS_TABLE//:/.} \
-   -D start_yyyymmdd=$(yyyymmdd ${START_DATE}) \
-   -D end_yyyymmdd=$(yyyymmdd ${END_DATE}) \
    | bq query --max_rows=0
 
 if [ "$?" -ne 0 ]; then
-  echo "  Unable to insert records for table ${TRACKS_TABLE} from ${START_DATE} to ${END_DATE}"
+  echo "  Unable to insert records for table ${TRACKS_TABLE}"
   exit 1
 fi
 

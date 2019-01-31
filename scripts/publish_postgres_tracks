@@ -4,7 +4,6 @@ source pipe-tools-utils
 THIS_SCRIPT_DIR="$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )"
 ASSETS=${THIS_SCRIPT_DIR}/../assets
 ARGS=( \
-  START_DATE \
   SOURCE \
   TEMP_BUCKET \
   DEST_INSTANCE \
@@ -36,7 +35,6 @@ done
 TEMP_PATH=gs://${TEMP_BUCKET}/pipe-vessels/$( date -u "+%FT%T.%N" )
 
 echo "Running $0"
-echo "  START_DATE: $START_DATE"
 echo "  SOURCE: $SOURCE"
 echo "  TEMP_BUCKET: $TEMP_BUCKET"
 echo "  DEST_INSTANCE: $DEST_INSTANCE"
