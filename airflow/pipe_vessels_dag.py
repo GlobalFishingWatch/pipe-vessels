@@ -22,7 +22,7 @@ class PipelineDagFactory(DagFactory):
                 task_id='aggregate_tracks',
                 pool='bigquery',
                 bash_command='{docker_run} {docker_image} aggregate_tracks '
-                '{project_id}:{pipeline_dataset}.{source_table} '
+                '{project_id}:{source_dataset}.{source_table} '
                 '{project_id}:{pipeline_dataset}.{bigquery_tracks} '.format(
                     **config)
             )
@@ -40,15 +40,16 @@ class PipelineDagFactory(DagFactory):
             publish_postgres_vessels = BashOperator(
                 task_id='publish_postgres_vessels',
                 bash_command='{docker_run} {docker_image} publish_postgres_vessels '
-                '{project_id}:{pipeline_dataset}.{bigquery_segment_vessel} '
+                '{project_id}:{source_dataset}.{bigquery_segment_vessel} '
                 '{temp_bucket} '
                 '{postgres_instance} '
                 '{postgres_connection_string} '
                 '{postgres_table_vessels}'.format(**config)
             )
 
-            dag >> source_sensors >> aggregate_tracks >> (
-                publish_postgres_tracks, publish_postgres_vessels)
+            for sensor in source_sensors:
+                dag >> sensor >> aggregate_tracks >> (
+                    publish_postgres_tracks, publish_postgres_vessels)
 
             return dag
 
