@@ -5,8 +5,13 @@ from airflow.operators.bash_operator import BashOperator
 from airflow.models import Variable
 from pipe_tools.airflow.models import DagFactory
 
+PIPELINE = "pipe_vessels"
+
 
 class PipelineDagFactory(DagFactory):
+    def __init__(self, pipeline=PIPELINE, **kwargs):
+        super(PipelineDagFactory, self).__init__(pipeline=pipeline, **kwargs)
+
     def build(self, dag_id):
         config = self.config
 
@@ -46,3 +51,6 @@ class PipelineDagFactory(DagFactory):
                 publish_postgres_tracks, publish_postgres_vessels)
 
             return dag
+
+
+vessels_daily = PipelineDagFactory().build('pipe_vessels_daily')
