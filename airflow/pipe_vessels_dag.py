@@ -22,7 +22,7 @@ class PipelineDagFactory(DagFactory):
                 task_id='aggregate_tracks',
                 pool='bigquery',
                 bash_command='{docker_run} {docker_image} aggregate_tracks '
-                '{project_id}:{pipeline_dataset}.{bigquery_scored_messages} '
+                '{project_id}:{pipeline_dataset}.{source_table} '
                 '{project_id}:{pipeline_dataset}.{bigquery_tracks} '.format(
                     **config)
             )
