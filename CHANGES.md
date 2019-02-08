@@ -8,6 +8,13 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ## [Unreleased]
 
-* Initial release
+### Added
 
-[Unreleased]: https://github.com/GlobalFishingWatch/api-vessels/compare/develop...master
+* [#887](https://github.com/GlobalFishingWatch/GFW-Tasks/issues/887): Adds a
+  new task which exports the vessel information data into an elastic search
+  index. This requires some additional configuration settings to point the
+  pipeline to the elasticsearch server. Check the
+  [README.md](README.md#Configuration) for more information.
+
+* [#958](https://github.com/GlobalFishingWatch/GFW-Tasks/issues/958): Adds
+  vessel track aggregation steps to the pipeline.
