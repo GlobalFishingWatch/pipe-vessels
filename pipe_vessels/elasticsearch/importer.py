@@ -25,10 +25,10 @@ def line_to_elasticsearch_bulk_command(line):
     command = {"index": {"_index": unique_index_name,
                          "_type": "vessel", "_id": record["vessel_id"]}}
     data = {
-        "vessel_id": record["vessel_id"],
+        "vesselId": record["vessel_id"],
         "start": to_elasticsearch_datetime(record["first_timestamp"]),
         "end": to_elasticsearch_datetime(record["last_timestamp"]),
-        "shipname": record.get("shipname", {}).get("value"),
+        "name": record.get("shipname", {}).get("value"),
         "callsign": record.get("callsign", {}).get("value"),
         "imo": record.get("imo", {}).get("value"),
     }

@@ -2,7 +2,7 @@
   "mappings": {
     "vessels": {
       "properties": {
-        "vessel_id": {
+        "vesselid": {
           "type": "keyword"
         },
         "start": {
@@ -11,7 +11,7 @@
         "end": {
           "type": "date"
         },
-        "shipname": {
+        "name": {
           "type": "keyword"
         },
         "callsign": {
