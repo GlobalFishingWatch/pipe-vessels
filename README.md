@@ -30,9 +30,10 @@ The pipeline exposes the following standard settings:
 In addition to this, the following custom settings are required for this
 pipeline, and come with default values:
 
-* `pipe_vessels.source_table`: BigQuery table to read scored messages from, used as the source for track aggregation. Defaults to `messages_scored_`
-* `pipe_vessels.bigquery_segment_vessel`: BigQuery table to read segment to vessel mappings. Defaults to `segment_vessel`
-* `pipe_vessels.bigquery_tracks`: BigQuery table to write aggregated tracks into. Defaults to `tracks`
+* `pipe_vessels.source_table`: BigQuery table to read scored messages from, used as the source for track aggregation. Defaults to `messages_scored_`.
+* `pipe_vessels.bigquery_segment_vessel`: BigQuery table to read segment to vessel mappings. Defaults to `segment_vessel`.
+* `pipe_vessels.bigquery_tracks`: BigQuery table to write aggregated tracks into. Defaults to `tracks`.
+* `pipe_vessels.bigquery_vessel_info`: BigQuery table to read vessel information for the vessel info indexes. Defaults to `vessel_info`.
 
 Finally, the following custom entries do not provide a default value and must be manually configured before using this pipeline:
 
@@ -40,6 +41,9 @@ Finally, the following custom entries do not provide a default value and must be
 * `pipe_vessels.postgres_connection_string`: Connection string for the postgres database to publish the tracks to.
 * `pipe_vessels.postgres_table_tracks`: Table in postgres to publish the tracks to.
 * `pipe_vessels.postgres_table_vessels`: Table in postgres to publish the segment-to-vessel mappings to.
+* `pipe_vessels.elastic_server_url`: ElasticSearch server to push vessel information to.
+* `pipe_vessels.elastic_server_url`: ElasticSearch authentication information for the server. Should be in `user:password` format.
+* `pipe_vessels.elastic_index_alias`: ElasticSearch index alias to push information to. 
 
 # License
 

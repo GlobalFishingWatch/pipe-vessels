@@ -15,6 +15,7 @@ python $AIRFLOW_HOME/utils/set_default_variables.py \
     source_table="messages_scored_" \
     bigquery_segment_vessel="segment_vessel" \
     bigquery_tracks="tracks" \
+    bigquery_vessel_info="vessel_info" \
 
 
 echo "Installation Complete"

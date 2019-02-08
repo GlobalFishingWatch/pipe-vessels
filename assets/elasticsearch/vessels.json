@@ -1,0 +1,26 @@
+{
+  "mappings": {
+    "vessels": {
+      "properties": {
+        "vessel_id": {
+          "type": "keyword"
+        },
+        "start": {
+          "type": "date"
+        },
+        "end": {
+          "type": "date"
+        },
+        "shipname": {
+          "type": "keyword"
+        },
+        "callsign": {
+          "type": "keyword"
+        },
+        "imo": {
+          "type": "keyword"
+        }
+      }
+    }
+  }
+}

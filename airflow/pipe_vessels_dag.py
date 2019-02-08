@@ -18,6 +18,17 @@ class PipelineDagFactory(DagFactory):
         with DAG(dag_id, schedule_interval=self.schedule_interval, default_args=self.default_args) as dag:
             source_sensors = self.source_table_sensors(dag)
 
+            publish_vessel_info = BashOperator(
+                task_id='publish_vessel_info',
+                wait_for_downstream=True,
+                bash_command='{docker_run} {docker_image} publish_vessel_info '
+                '{project_id}:{source_dataset}.{bigquery_vessel_info} '
+                '{temp_bucket} '
+                '{elasticsearch_server_url} '
+                '{elasticsearch_server_auth} '
+                '{elasticsearch_index_alias}'.format(**config)
+            )
+
             aggregate_tracks = BashOperator(
                 task_id='aggregate_tracks',
                 pool='bigquery',
@@ -48,7 +59,7 @@ class PipelineDagFactory(DagFactory):
             )
 
             for sensor in source_sensors:
-                dag >> sensor >> aggregate_tracks >> (
+                dag >> sensor >> (aggregate_tracks, publish_vessel_info) >> (
                     publish_postgres_tracks, publish_postgres_vessels)
 
             return dag
