@@ -59,8 +59,11 @@ class PipelineDagFactory(DagFactory):
             )
 
             for sensor in source_sensors:
-                dag >> sensor >> (aggregate_tracks, publish_vessel_info) >> (
-                    publish_postgres_tracks, publish_postgres_vessels)
+                dag >> sensor
+                sensor >> aggregate_tracks
+                sensor >> publish_vessel_info
+                sensor >> publish_postgres_vessels
+                aggregate_tracks >> publish_postgres_tracks
 
             return dag
 
