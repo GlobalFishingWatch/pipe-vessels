@@ -42,7 +42,7 @@ Finally, the following custom entries do not provide a default value and must be
 * `pipe_vessels.postgres_table_tracks`: Table in postgres to publish the tracks to.
 * `pipe_vessels.postgres_table_vessels`: Table in postgres to publish the segment-to-vessel mappings to.
 * `pipe_vessels.elastic_server_url`: ElasticSearch server to push vessel information to.
-* `pipe_vessels.elastic_server_url`: ElasticSearch authentication information for the server. Should be in `user:password` format.
+* `pipe_vessels.elastic_server_auth`: ElasticSearch authentication information for the server. Should be in `user:password` format.
 * `pipe_vessels.elastic_index_alias`: ElasticSearch index alias to push information to. 
 
 # License
