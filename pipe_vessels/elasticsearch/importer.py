@@ -11,28 +11,11 @@ def batch(iterable, size):
     args = [iter(iterable)] * size
     return it.izip_longest(*args)
 
-
-bq_datetime_regex = re.compile('^(\d\d\d\d-\d\d-\d\d) (\d\d:\d\d:\d\d) UTC$')
-
-
-def to_elasticsearch_datetime(value):
-    match = bq_datetime_regex.match(value)
-    return "{}T{}Z".format(match.group(1), match.group(2))
-
-
 def line_to_elasticsearch_bulk_command(line):
     record = json.loads(line)
     command = {"index": {"_index": unique_index_name,
-                         "_type": "vessel", "_id": record["vessel_id"]}}
-    data = {
-        "vesselId": record["vessel_id"],
-        "start": to_elasticsearch_datetime(record["first_timestamp"]),
-        "end": to_elasticsearch_datetime(record["last_timestamp"]),
-        "name": record.get("shipname", {}).get("value"),
-        "callsign": record.get("callsign", {}).get("value"),
-        "imo": record.get("imo", {}).get("value"),
-    }
-    return [command, data]
+                         "_type": "vessel", "_id": record["vesselId"]}}
+    return [command, record]
 
 
 
@@ -56,11 +39,8 @@ old_indices = list(alias_info.keys())
 print "The alias is currently pointing to {}".format(old_indices)
 
 # Precreate the index so that we can setup proper mappings
-with open(index_schema, 'rb') as schema_file:
-    print "Reading schema from {}".format(index_schema)
-    schema = schema_file.read()
-    print "Creating index {}".format(unique_index_name)
-    server.create_index(unique_index_name, schema)
+print "Creating index {}".format(unique_index_name)
+server.create_index(unique_index_name, index_schema)
 
 try:
     # Process the records in batches

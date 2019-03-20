@@ -13,7 +13,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 * [#887](https://github.com/GlobalFishingWatch/GFW-Tasks/issues/887): Adds a
   new task which exports the vessel information data into an elastic search
   index. This requires some additional configuration settings to point the
-  pipeline to the elasticsearch server. Check the
+  pipeline to the ElasticSearch server, and to setup the query that generates
+  the information to import to ElasticSearch. Check the
   [README.md](README.md#Configuration) for more information.
 
 * [#958](https://github.com/GlobalFishingWatch/GFW-Tasks/issues/958): Adds

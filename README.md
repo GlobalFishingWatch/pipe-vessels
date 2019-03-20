@@ -33,10 +33,11 @@ pipeline, and come with default values:
 * `pipe_vessels.source_table`: BigQuery table to read scored messages from, used as the source for track aggregation. Defaults to `messages_scored_`.
 * `pipe_vessels.bigquery_segment_vessel`: BigQuery table to read segment to vessel mappings. Defaults to `segment_vessel`.
 * `pipe_vessels.bigquery_tracks`: BigQuery table to write aggregated tracks into. Defaults to `tracks`.
-* `pipe_vessels.bigquery_vessel_info`: BigQuery table to read vessel information for the vessel info indexes. Defaults to `vessel_info`.
 
 Finally, the following custom entries do not provide a default value and must be manually configured before using this pipeline:
 
+* `pipe_vessels.bigquery_vessel_info_query`: BigQuery standardSQL query to generate the information to export to the ElasticSearch index. The names of the output fields of the query will be the same names that will be available in the ElasticSearch documents. It should contain a `vesselId` field that will be used as the document id.
+* `pipe_vessels.bigquery_extract_table_prefix`: Unique table prefix, including project id and dataset, that will be used to generate temporary tables to extract the vessel info. Should be unique to the pipeline instance that's being configured, to prevent name collisions on concurrent runs.
 * `pipe_vessels.postgres_instance`: CloudSQL postgres instance where the tracks are published to.
 * `pipe_vessels.postgres_connection_string`: Connection string for the postgres database to publish the tracks to.
 * `pipe_vessels.postgres_table_tracks`: Table in postgres to publish the tracks to.
@@ -44,6 +45,7 @@ Finally, the following custom entries do not provide a default value and must be
 * `pipe_vessels.elastic_server_url`: ElasticSearch server to push vessel information to.
 * `pipe_vessels.elastic_server_auth`: ElasticSearch authentication information for the server. Should be in `user:password` format.
 * `pipe_vessels.elastic_index_alias`: ElasticSearch index alias to push information to. 
+* `pipe_vessels.elasticsearch_index_mappings`: ElasticSearch mappings json used to characterize the fields that are output from the `pipe_vessels.bigquery_vessel_info_query`.
 
 # License
 

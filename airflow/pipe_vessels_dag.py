@@ -22,11 +22,13 @@ class PipelineDagFactory(DagFactory):
                 task_id='publish_vessel_info',
                 wait_for_downstream=True,
                 bash_command='{docker_run} {docker_image} publish_vessel_info '
-                '{project_id}:{source_dataset}.{bigquery_vessel_info} '
+                '"{bigquery_vessel_info_query}" '
+                '{bigquery_extract_table_prefix} '
                 '{temp_bucket} '
                 '{elasticsearch_server_url} '
                 '{elasticsearch_server_auth} '
-                '{elasticsearch_index_alias}'.format(**config)
+                '{elasticsearch_index_alias} '
+                '{elasticsearch_index_mappings}'.format(**config)
             )
 
             aggregate_tracks = BashOperator(
@@ -48,21 +50,10 @@ class PipelineDagFactory(DagFactory):
                 '{postgres_table_tracks}'.format(**config)
             )
 
-            publish_postgres_vessels = BashOperator(
-                task_id='publish_postgres_vessels',
-                bash_command='{docker_run} {docker_image} publish_postgres_vessels '
-                '{project_id}:{source_dataset}.{bigquery_segment_vessel} '
-                '{temp_bucket} '
-                '{postgres_instance} '
-                '{postgres_connection_string} '
-                '{postgres_table_vessels}'.format(**config)
-            )
-
             for sensor in source_sensors:
                 dag >> sensor
                 sensor >> aggregate_tracks
                 sensor >> publish_vessel_info
-                sensor >> publish_postgres_vessels
                 aggregate_tracks >> publish_postgres_tracks
 
             return dag
