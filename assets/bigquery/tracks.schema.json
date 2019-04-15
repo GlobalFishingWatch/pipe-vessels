@@ -33,19 +33,19 @@
     "mode": "REPEATED",
     "name": "scores",
     "type": "FLOAT64",
-    "description": "MULTIPOINT containing all the fishing scores of the messages in this track."
+    "description": "Array containing all the fishing scores of the messages in this track."
   },
   {
     "mode": "REPEATED",
     "name": "speeds",
     "type": "FLOAT64",
-    "description": "MULTIPOINT containing all the speeds of the messages in this track."
+    "description": "Array containing all the speeds of the messages in this track."
   },
   {
     "mode": "REPEATED",
     "name": "courses",
     "type": "FLOAT64",
-    "description": "MULTIPOINT containing all the courses of the messages in this track."
+    "description": "Array containing all the courses of the messages in this track."
   }
 ]
 

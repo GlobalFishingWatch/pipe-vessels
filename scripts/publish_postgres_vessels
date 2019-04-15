@@ -81,7 +81,7 @@ if [ "$?" -ne 0 ]; then
   exit 1
 fi
 echo "Converting json records to csv format"
-cat ${LOCAL_JSON_PATH}/*.json | python -m pipe_vessels.postgres.tracks ${LOCAL_CSV_FILE}
+cat ${LOCAL_JSON_PATH}/*.json | python -m pipe_vessels.postgres.vessels ${LOCAL_CSV_FILE}
 if [ "$?" -ne 0 ]; then
   echo "  Unable to convert records from JSON to CSV format"
   exit 1
@@ -99,7 +99,7 @@ sleep 5
 # Load data into postgres
 ################################################################################
 echo "Setting up database for data import"
-SETUP_SQL=${ASSETS}/postgres/tracks_setup.sql.j2
+SETUP_SQL=${ASSETS}/postgres/vessels_setup.sql.j2
 jinja2 ${SETUP_SQL} \
   -D table_name=${DEST_TABLE} \
   | psql -v ON_ERROR_STOP=ON "${DEST_CONNECTION_STRING}"
@@ -109,7 +109,7 @@ if [ "$?" -ne 0 ]; then
 fi
 
 echo "Importing data"
-COPY_COMMAND="\copy ${DEST_TABLE} (seg_id, seg_geography, times, scores, speeds, courses) from stdin with (format 'csv')"
+COPY_COMMAND="\copy ${DEST_TABLE} (seg_id, vessel_id) from stdin with (format 'csv')"
 cat ${LOCAL_CSV_FILE} | psql -v ON_ERROR_STOP=ON "${DEST_CONNECTION_STRING}" -c "$COPY_COMMAND"
 if [ "$?" -ne 0 ]; then
   echo "  Unable to import data into postgres"
@@ -117,7 +117,7 @@ if [ "$?" -ne 0 ]; then
 fi
 
 echo "Indexing data"
-INDEX_SQL=${ASSETS}/postgres/tracks_index.sql.j2
+INDEX_SQL=${ASSETS}/postgres/vessels_index.sql.j2
 jinja2 ${INDEX_SQL} \
   -D table_name=${DEST_TABLE} \
   | psql -v ON_ERROR_STOP=ON "${DEST_CONNECTION_STRING}"

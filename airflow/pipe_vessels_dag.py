@@ -50,11 +50,22 @@ class PipelineDagFactory(DagFactory):
                 '{postgres_table_tracks}'.format(**config)
             )
 
+            publish_postgres_vessels = BashOperator(
+                task_id='publish_postgres_vessels',
+                bash_command='{docker_run} {docker_image} publish_postgres_vessels '
+                '{project_id}:{source_dataset}.{bigquery_segment_vessel} '
+                '{temp_bucket} '
+                '{postgres_instance} '
+                '{postgres_connection_string} '
+                '{postgres_table_vessels}'.format(**config)
+            )
+
             for sensor in source_sensors:
                 dag >> sensor
                 sensor >> aggregate_tracks
                 sensor >> publish_vessel_info
                 aggregate_tracks >> publish_postgres_tracks
+                aggregate_tracks >> publish_postgres_vessels
 
             return dag
 
