@@ -6,7 +6,6 @@ display_usage() {
 	echo "Available Commands"
 	echo "  aggregate_tracks                   aggregate messages into tracks and publish to bigquery"
   echo "  publish_postgres_tracks            publish tracks from a given bigquery table to postgis"
-  echo "  publish_postgres_vessels           publish vessels from a given bigquery table to postgis"
   echo "  publish_vessel_info                publish vessel information to the vessel search index"
 	}
 
@@ -26,10 +25,6 @@ case $1 in
 
   publish_postgres_tracks)
     ${THIS_SCRIPT_DIR}/publish_postgres_tracks "${@:2}"
-    ;;
-
-  publish_postgres_vessels)
-    ${THIS_SCRIPT_DIR}/publish_postgres_vessels "${@:2}"
     ;;
 
   publish_vessel_info)

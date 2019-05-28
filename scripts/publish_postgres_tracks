@@ -15,7 +15,8 @@ ARGS=( \
 # Validate and extract arguments
 ################################################################################
 display_usage() {
-  echo -e "\nUsage:\n$0 SOURCE TEMP_BUCKET DEST_INSTANCE DEST_CONNECTION_STRING DEST_TABLE\n"
+  ARG_NAMES=$(echo "${ARGS[*]}")
+  echo -e "\nUsage:\n$0 $ARG_NAMES\n"
 }
 
 if [[ $# -ne ${#ARGS[@]} ]]
@@ -24,26 +25,19 @@ then
     exit 1
 fi
 
+echo "Running $0"
 ARG_VALUES=("$@")
 PARAMS=()
 for index in ${!ARGS[*]}; do
-  echo "${ARGS[$index]}=${ARG_VALUES[$index]}"
+  echo "  ${ARGS[$index]}=${ARG_VALUES[$index]}"
   declare "${ARGS[$index]}"="${ARG_VALUES[$index]}"
 done
 
-
-TEMP_PATH=gs://${TEMP_BUCKET}/pipe-vessels/$( date -u "+%FT%T.%N" )
-
-echo "Running $0"
-echo "  SOURCE: $SOURCE"
-echo "  TEMP_BUCKET: $TEMP_BUCKET"
-echo "  DEST_INSTANCE: $DEST_INSTANCE"
-echo "  DEST_CONNECTION_STRING: $DEST_CONNECTION_STRING"
-echo "  DEST_TABLE: $DEST_TABLE"
 ################################################################################
 # Export records to json files
 ################################################################################
 echo "Exporting records from $SOURCE"
+TEMP_PATH=gs://${TEMP_BUCKET}/pipe-vessels/$( date -u "+%FT%T.%N" )
 EXTRACT_PATH=$TEMP_PATH/bq/*.json
 bq extract \
   --destination_format=NEWLINE_DELIMITED_JSON \
@@ -109,7 +103,7 @@ if [ "$?" -ne 0 ]; then
 fi
 
 echo "Importing data"
-COPY_COMMAND="\copy ${DEST_TABLE} (seg_id, seg_geography, times, scores, speeds, courses) from stdin with (format 'csv')"
+COPY_COMMAND="\copy ${DEST_TABLE} (seg_id, vessel_id, timestamp, position, score, speed, course) from stdin with (format 'csv')"
 cat ${LOCAL_CSV_FILE} | psql -v ON_ERROR_STOP=ON "${DEST_CONNECTION_STRING}" -c "$COPY_COMMAND"
 if [ "$?" -ne 0 ]; then
   echo "  Unable to import data into postgres"

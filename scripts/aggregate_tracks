@@ -3,24 +3,37 @@ source pipe-tools-utils
 
 THIS_SCRIPT_DIR="$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )"
 ASSETS=${THIS_SCRIPT_DIR}/../assets
-source ${THIS_SCRIPT_DIR}/pipeline.sh
+ARGS=( \
+  MESSAGES_TABLE \
+  SEGMENT_INFO_TABLE \
+  SEGMENT_VESSEL_TABLE \
+  TRACKS_TABLE \
+)
 
+################################################################################
+# Validate and extract arguments
+################################################################################
 display_usage() {
-  echo -e "\nUsage:\n$0 MESSAGES_TABLE TRACKS_TABLE\n"
+  ARG_NAMES=$(echo "${ARGS[*]}")
+  echo -e "\nUsage:\n$0 $ARG_NAMES\n"
 }
 
-if [[ $# -ne 2  ]]
+if [[ $# -ne ${#ARGS[@]} ]]
 then
     display_usage
     exit 1
 fi
 
-MESSAGES_TABLE=$1
-TRACKS_TABLE=$2
-
-DELETE_SQL=${ASSETS}/bigquery/delete.sql.j2
-INSERT_SQL=${ASSETS}/bigquery/aggregate-tracks.sql.j2
-SCHEMA=${ASSETS}/bigquery/tracks.schema.json
+echo "Running $0"
+ARG_VALUES=("$@")
+PARAMS=()
+for index in ${!ARGS[*]}; do
+  echo "  ${ARGS[$index]}=${ARG_VALUES[$index]}"
+  declare "${ARGS[$index]}"="${ARG_VALUES[$index]}"
+done
+################################################################################
+# Generating tracks table
+################################################################################
 TABLE_DESC=(
   "* Pipeline: ${PIPELINE} ${PIPELINE_VERSION}"
   "* Source: ${MESSAGES_TABLE}"
@@ -29,43 +42,44 @@ TABLE_DESC=(
   "$@"
 )
 TABLE_DESC=$( IFS=$'\n'; echo "${TABLE_DESC[*]}" )
-
-
 echo "Publishing tracks to ${TRACKS_TABLE}..."
 echo "${TABLE_DESC}"
-
-echo "  Create table"
-
+SCHEMA=${ASSETS}/bigquery/tracks.schema.json
 bq mk --force \
   --description "${TABLE_DESC}" \
   --schema ${SCHEMA} \
   ${TRACKS_TABLE}
-
 if [ "$?" -ne 0 ]; then
   echo "  Unable to create table ${TRACKS_TABLE}"
   exit 1
 fi
 
-echo "  Deleting existing records for table ${TRACKS_TABLE}"
-
+################################################################################
+# Clean up existing records
+################################################################################
+echo "Deleting existing records for table ${TRACKS_TABLE}"
+DELETE_SQL=${ASSETS}/bigquery/delete.sql.j2
 jinja2 ${DELETE_SQL} -D table=${TRACKS_TABLE//:/.} \
      | bq query --max_rows=0
-
 if [ "$?" -ne 0 ]; then
   echo "  Unable to delete records for table ${TRACKS_TABLE}"
   exit 1
 fi
 
+################################################################################
+# Inserting new records
+################################################################################
 echo "  Inserting new records for table ${TRACKS_TABLE}"
-
+INSERT_SQL=${ASSETS}/bigquery/aggregate-tracks.sql.j2
 jinja2 ${INSERT_SQL} \
    -D source=${MESSAGES_TABLE//:/.} \
    -D dest=${TRACKS_TABLE//:/.} \
+   -D segment_info=${SEGMENT_INFO_TABLE//:/.} \
+   -D segment_vessel=${SEGMENT_VESSEL_TABLE//:/.} \
    | bq query --max_rows=0
-
 if [ "$?" -ne 0 ]; then
   echo "  Unable to insert records for table ${TRACKS_TABLE}"
   exit 1
 fi
 
-echo "  ${TRACKS_TABLE} Done."
+echo "${TRACKS_TABLE} Done."
