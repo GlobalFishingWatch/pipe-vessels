@@ -1,3 +1,5 @@
+"""Short script to convert track records exported from BigQuery to the CSV format Postgres needs."""
+
 import sys
 import json
 import csv

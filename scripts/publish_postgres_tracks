@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 source pipe-tools-utils
 
 THIS_SCRIPT_DIR="$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )"
@@ -39,7 +40,7 @@ done
 echo "Exporting records from $SOURCE"
 TEMP_PATH=gs://${TEMP_BUCKET}/pipe-vessels/$( date -u "+%FT%T.%N" )
 EXTRACT_PATH=$TEMP_PATH/bq/*.json
-bq extract \
+bq --headless extract \
   --destination_format=NEWLINE_DELIMITED_JSON \
   $SOURCE \
   $EXTRACT_PATH

@@ -1,3 +1,5 @@
+"""Utility classes for accessing elastc search through it's HTTP API"""
+
 import httplib
 import base64
 import json

@@ -1,3 +1,5 @@
+"""Short script to imports vessel information into elastic search."""
+
 import json
 import sys
 import datetime as dt
