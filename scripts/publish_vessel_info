@@ -6,7 +6,7 @@ THIS_SCRIPT_DIR="$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )"
 ASSETS=${THIS_SCRIPT_DIR}/../assets
 ARGS=( \
   SOURCE_QUERY \
-  TEMP_EXTRACT_TABLE_PREFIX
+  TEMP_DATASET \
   TEMP_BUCKET \
   ELASTIC_SEARCH_SERVER_URL \
   ELASTIC_SEARCH_SERVER_AUTH \
@@ -18,7 +18,8 @@ ARGS=( \
 # Validate and extract arguments
 ################################################################################
 display_usage() {
-  echo -e "\nUsage:\n$ SOURCE_QUERY TEMP_EXTRACT_TABLE_PREFIX TEMP_BUCKET ELASTIC_SEARCH_SERVER_URL ELASTIC_SEARCH_SERVER_AUTH ELASTIC_SEARCH_INDEX_ALIAS ELASTIC_SEARCH_INDEX_MAPPINGS\n"
+  ARG_NAMES=$(echo "${ARGS[*]}")
+  echo -e "\nUsage:\n$0 $ARG_NAMES\n"
 }
 
 if [[ $# -ne ${#ARGS[@]} ]]
@@ -38,25 +39,28 @@ done
 # Running bigquery query to generate vessel information
 ################################################################################
 echo "Running vessel information query"
-CURRENT_TIMESTAMP=$(date -u +%Y%m%d%H%M%S)
-TEMP_EXTRACT_TABLE="${TEMP_EXTRACT_TABLE_PREFIX}_${CURRENT_TIMESTAMP}"
-echo "${SOURCE_QUERY}" | bq --headless query \
+UUID=$(uuidgen)
+TEMP_EXTRACT_TABLE="${TEMP_DATASET}.${UUID//-/_}"
+echo "  Running query to destination table ${TEMP_EXTRACT_TABLE}"
+echo "${SOURCE_QUERY}" \
+  | bq --headless query \
+  -n 0 \
   --destination_table ${TEMP_EXTRACT_TABLE} \
-  --use_legacy_sql=false \
-  --replace
+  --use_legacy_sql=false
 if [ "$?" -ne 0 ]; then
   echo "  Unable to run vessel information query into ${TEMP_EXTRACT_TABLE}"
   exit 1
 fi
-echo "Extracted vessel information into ${TEMP_EXTRACT_TABLE}"
+echo "  Extracted vessel information into ${TEMP_EXTRACT_TABLE}"
 
 #################################################################################
 ## Export records to json files
 #################################################################################
 echo "Exporting records from $TEMP_EXTRACT_TABLE"
-TEMP_PATH=gs://${TEMP_BUCKET}/pipe-vessels/${CURRENT_TIMESTAMP}
-TEMP_EXTRACT_PATH=$TEMP_PATH/bq/*.json
+TEMP_PATH=gs://${TEMP_BUCKET}/pipe-vessels/publish-vessel-info/$( date -u "+%FT%T.%N" )
+TEMP_EXTRACT_PATH=$TEMP_PATH/bq/*.json.gz
 bq --headless extract \
+  --compression=GZIP \
   --destination_format=NEWLINE_DELIMITED_JSON \
   $TEMP_EXTRACT_TABLE \
   $TEMP_EXTRACT_PATH
@@ -64,7 +68,18 @@ if [ "$?" -ne 0 ]; then
   echo "  Unable to extract ${TEMP_EXTRACT_TABLE} to ${TEMP_EXTRACT_PATH}"
   exit 1
 fi
-echo "Exported records from ${TEMP_EXTRACT_TABLE} to ${TEMP_EXTRACT_PATH}"
+echo "  Exported records from ${TEMP_EXTRACT_TABLE} to ${TEMP_EXTRACT_PATH}"
+
+################################################################################
+# Delete the temp extract table
+################################################################################
+echo "Deleting temp extract table ${TEMP_EXTRACT_TABLE}"
+bq rm -t -f ${TEMP_EXTRACT_TABLE}
+if [ "$?" -ne 0 ]; then
+  echo "  Unable to delete the temp extract table ${TEMP_EXTRACT_TABLE}"
+  exit 1
+fi
+echo "  Deleted the temp extract table ${TEMP_EXTRACT_TABLE}"
 
 ################################################################################
 # Download files locally
@@ -83,9 +98,10 @@ echo "  Downloaded records from ${TEMP_EXTRACT_PATH}"
 # Load data into Elastic Search
 ################################################################################
 echo "Loading data into Elastic Search"
-cat ${LOCAL_JSON_PATH}/*.json | python -u -m pipe_vessels.elasticsearch.importer $ELASTIC_SEARCH_SERVER_URL $ELASTIC_SEARCH_SERVER_AUTH $ELASTIC_SEARCH_INDEX_ALIAS "$ELASTIC_SEARCH_INDEX_MAPPINGS"
+zcat ${LOCAL_JSON_PATH}/*.json.gz \
+  | python -u -m pipe_vessels.elasticsearch.importer $ELASTIC_SEARCH_SERVER_URL $ELASTIC_SEARCH_SERVER_AUTH $ELASTIC_SEARCH_INDEX_ALIAS "$ELASTIC_SEARCH_INDEX_MAPPINGS"
 if [ "$?" -ne 0 ]; then
   echo "  Unable to load data into Elastic Search"
   exit 1
 fi
-echo "Loaded data into Elastic Search"
+echo "  Loaded data into Elastic Search"

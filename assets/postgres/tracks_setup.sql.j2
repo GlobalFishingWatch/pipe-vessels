@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS public.{{ table_name }} (
 );
 
 -- Ensure the table is empty
-TRUNCATE public.{{ table_name }};
+DELETE FROM public.{{ table_name }} WHERE timestamp BETWEEN '{{start}}' AND '{{end}}';
 
 -- Drop all constraints and indices if they exist
 DROP INDEX IF EXISTS {{ table_name }}_seg_id;

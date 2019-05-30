@@ -14,4 +14,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Changed
 
-* [#985](https://github.com/GlobalFishingWatch/GFW-Tasks/issues/985): Changes the way the tracks are published to postgres. They are now published to a single table, we no longer need a separate tracks and vessel table, and the individual, unaggregated points are stored instead of the old accumulated track record.
+* [#985](https://github.com/GlobalFishingWatch/GFW-Tasks/issues/985): Changes the way the tracks are published to postgres. They are now published to a single table, we no longer need a separate tracks and vessel table, and the individual, unaggregated points are stored instead of the old accumulated track record. This also makes this pipeline run for the given dates only.

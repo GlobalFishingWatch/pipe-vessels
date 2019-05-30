@@ -7,6 +7,7 @@ WORKDIR /opt/project
 # Install and update pip
 # Pin the version because pip>=10.0 does not support the --download flag  which is required for dataflow
 RUN pip install -U --ignore-installed pip==9.0.3
+ENV CLOUD_SDK_VERSION 248.0.0
 
 # Download and install google cloud. See the dockerfile at
 # https://hub.docker.com/r/google/cloud-sdk/~/dockerfile/
@@ -16,7 +17,6 @@ RUN  \
   apt-get -y update && \
   apt-get install -y $CLOUD_SDK_APT_DEPS && \
   pip install -U $CLOUD_SDK_PIP_DEPS && \
-  export CLOUD_SDK_VERSION="198.0.0" && \
   export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)" && \
   echo "deb https://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" > /etc/apt/sources.list.d/google-cloud-sdk.list && \
   curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && \
@@ -31,6 +31,9 @@ RUN \
   wget -q https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O /usr/local/bin/cloud_sql_proxy && \
   chmod +x /usr/local/bin/cloud_sql_proxy && \
   apt-get -y install postgresql-client
+
+# Install uuidgen
+RUN apt-get install -y uuid-runtime
 
 # Setup a volume for configuration and auth data
 VOLUME ["/root/.config"]

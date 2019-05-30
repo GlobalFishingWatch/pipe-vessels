@@ -1,13 +1,4 @@
 #standardSQL
-INSERT INTO
-  `{{ dest }}` (
-  seg_id,
-  vessel_id,
-  timestamp,
-  position,
-  score,
-  speed,
-  course)
 WITH
   ########################################################
   # Extract the messages we are going to process
@@ -32,7 +23,9 @@ WITH
   USING
     (seg_id)
   WHERE
-    si.noise = false
+    _TABLE_SUFFIX BETWEEN '{{ start_yyyymmdd }}'
+    AND '{{ end_yyyymmdd }}'
+    AND si.noise = false
     AND si.pos_count > 5
     AND m.lat IS NOT NULL
     AND m.lon IS NOT NULL

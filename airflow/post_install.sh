@@ -12,6 +12,7 @@ python $AIRFLOW_HOME/utils/set_default_variables.py \
     pipeline_bucket="{{ var.value.PIPELINE_BUCKET }}" \
     pipeline_dataset="{{ var.value.PIPELINE_DATASET }}" \
     source_dataset="{{ var.value.PIPELINE_DATASET }}" \
+    temp_dataset="{{ var.value.TEMP_DATASET }}" \
     source_table="messages_scored_" \
     bigquery_segment_vessel="segment_vessel" \
     bigquery_segment_info="segment_info" \

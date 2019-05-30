@@ -5,7 +5,9 @@ source pipe-tools-utils
 THIS_SCRIPT_DIR="$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )"
 ASSETS=${THIS_SCRIPT_DIR}/../assets
 ARGS=( \
+  DATE_RANGE \
   SOURCE \
+  TEMP_DATASET \
   TEMP_BUCKET \
   DEST_INSTANCE \
   DEST_CONNECTION_STRING \
@@ -34,26 +36,64 @@ for index in ${!ARGS[*]}; do
   declare "${ARGS[$index]}"="${ARG_VALUES[$index]}"
 done
 
+IFS=, read START_DATE END_DATE <<<"${DATE_RANGE}"
+if [[ -z $END_DATE ]]; then
+  END_DATE=${START_DATE}
+fi
+################################################################################
+# Extracting the records we need to import to a different temp table
+################################################################################
+echo "Fetching only the records we need to export"
+UUID=$(uuidgen)
+TEMP_EXTRACT_TABLE="${TEMP_DATASET}.${UUID//-/_}"
+EXTRACT_SQL=${ASSETS}/bigquery/extract-tracks.sql.j2
+echo "  Running query to destionation table ${TEMP_EXTRACT_TABLE}"
+jinja2 ${EXTRACT_SQL} \
+  -D table=${SOURCE//:/.} \
+  -D start=${START_DATE} \
+  -D end=${END_DATE} \
+  | bq --headless query \
+  -n 0 \
+  --destination_table ${TEMP_EXTRACT_TABLE} \
+  --use_legacy_sql=false
+if [ "$?" -ne 0 ]; then
+  echo "  Unable to fetch the records to export into ${TEMP_EXTRACT_TABLE}"
+  exit 1
+fi
+echo "  Extracted the records to export into ${TEMP_EXTRACT_TABLE}"
+
 ################################################################################
 # Export records to json files
 ################################################################################
-echo "Exporting records from $SOURCE"
-TEMP_PATH=gs://${TEMP_BUCKET}/pipe-vessels/$( date -u "+%FT%T.%N" )
-EXTRACT_PATH=$TEMP_PATH/bq/*.json
+echo "Exporting records from $TEMP_EXTRACT_TABLE"
+TEMP_PATH=gs://${TEMP_BUCKET}/pipe-vessels/publish-postgres-tracks/$( date -u "+%FT%T.%N" )
+EXTRACT_PATH=$TEMP_PATH/bq/*.json.gz
 bq --headless extract \
+  --compression=GZIP \
   --destination_format=NEWLINE_DELIMITED_JSON \
-  $SOURCE \
+  $TEMP_EXTRACT_TABLE \
   $EXTRACT_PATH
 if [ "$?" -ne 0 ]; then
-  echo "  Unable to extract ${SOURCE} to ${EXTRACT_PATH}"
+  echo "  Unable to extract ${TEMP_EXTRACT_TABLE} to ${EXTRACT_PATH}"
   exit 1
 fi
-echo "  Exported records from ${SOURCE} to ${EXTRACT_PATH}"
+echo "  Exported records from ${TEMP_EXTRACT_TABLE} to ${EXTRACT_PATH}"
+
+################################################################################
+# Delete the temp extract table
+################################################################################
+echo "Deleting temp extract table ${TEMP_EXTRACT_TABLE}"
+bq rm -t -f ${TEMP_EXTRACT_TABLE}
+if [ "$?" -ne 0 ]; then
+  echo "  Unable to delete the temp extract table ${TEMP_EXTRACT_TABLE}"
+  exit 1
+fi
+echo "  Deleted the temp extract table ${TEMP_EXTRACT_TABLE}"
 
 ################################################################################
 # Download files locally
 ################################################################################
-echo "Downloading records from ${SOURCE} to local disk"
+echo "Downloading records from ${TEMP_EXTRACT_TABLE} to local disk"
 LOCAL_JSON_PATH=./data/json/
 mkdir -p ${LOCAL_JSON_PATH}
 gsutil -m cp ${EXTRACT_PATH} ${LOCAL_JSON_PATH}
@@ -76,7 +116,7 @@ if [ "$?" -ne 0 ]; then
   exit 1
 fi
 echo "Converting json records to csv format"
-cat ${LOCAL_JSON_PATH}/*.json | python -m pipe_vessels.postgres.tracks ${LOCAL_CSV_FILE}
+zcat ${LOCAL_JSON_PATH}/*.json.gz | python -m pipe_vessels.postgres.tracks ${LOCAL_CSV_FILE}
 if [ "$?" -ne 0 ]; then
   echo "  Unable to convert records from JSON to CSV format"
   exit 1
@@ -97,6 +137,8 @@ echo "Setting up database for data import"
 SETUP_SQL=${ASSETS}/postgres/tracks_setup.sql.j2
 jinja2 ${SETUP_SQL} \
   -D table_name=${DEST_TABLE} \
+  -D start=${START_DATE} \
+  -D end=${END_DATE} \
   | psql -v ON_ERROR_STOP=ON "${DEST_CONNECTION_STRING}"
 if [ "$?" -ne 0 ]; then
   echo "  Unable to set database up for data import"
