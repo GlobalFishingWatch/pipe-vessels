@@ -128,7 +128,19 @@ echo "  Coverted records from JSON to CSV"
 ################################################################################
 echo "Starting the cloudsql proxy"
 cloud_sql_proxy -instances=${DEST_INSTANCE}=tcp:5432 &
+echo "  Waiting until database is ready at 127.0.0.1:5432"
 sleep 5
+i=0
+while ! nc -v -w 5 127.0.0.1 5432 < /dev/null; do
+  i=`expr $i + 1`
+  if [ $i -ge 10 ]; then
+    echo "    $(date) - still not reachable, giving up"
+    exit 1
+  fi
+  echo "    $(date) - waiting $i/10"
+  sleep 5
+done
+echo "  Database is ready"
 
 ################################################################################
 # Load data into postgres

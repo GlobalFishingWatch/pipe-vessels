@@ -1,8 +1,6 @@
 -- Setup constraints and indices
-CREATE INDEX {{ table_name }}_seg_id ON public.{{ table_name }} (seg_id);
-CREATE INDEX {{ table_name }}_vessel_id ON public.{{ table_name }} (vessel_id);
+CREATE INDEX {{ table_name }}_vessel_id_seg_id_timestamp ON public.{{ table_name }} (vessel_id, seg_id, timestamp);
 CREATE INDEX {{ table_name }}_timestamp ON public.{{ table_name }} (timestamp);
-CREATE INDEX {{ table_name }}_position_gis ON public.{{ table_name }} USING gist (position);
 
 -- Ensure we run vacuumming after deleting most of the rows in the table
 VACUUM ANALYZE public.{{ table_name }};

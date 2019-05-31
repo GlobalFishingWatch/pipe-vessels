@@ -33,7 +33,7 @@ RUN \
   apt-get -y install postgresql-client
 
 # Install uuidgen
-RUN apt-get install -y uuid-runtime
+RUN apt-get install -y uuid-runtime netcat
 
 # Setup a volume for configuration and auth data
 VOLUME ["/root/.config"]

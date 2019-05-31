@@ -23,7 +23,6 @@ class PipelineDagFactory(DagFactory):
             publish_vessel_info = BashOperator(
                 task_id='publish_vessel_info',
                 depends_on_past=True,
-                wait_for_downstream=True,
                 bash_command='{docker_run} {docker_image} publish_vessel_info '
                 '\'{bigquery_vessel_info_query}\' '
                 '{project_id}:{temp_dataset} '
@@ -49,6 +48,7 @@ class PipelineDagFactory(DagFactory):
 
             publish_postgres_tracks = BashOperator(
                 task_id='publish_postgres_tracks',
+                depends_on_past=True,
                 bash_command='{docker_run} {docker_image} publish_postgres_tracks '
                 '{date_range} '
                 '{project_id}:{pipeline_dataset}.{bigquery_tracks} '
