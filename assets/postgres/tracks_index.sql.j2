@@ -1,6 +1,2 @@
--- Setup constraints and indices
-CREATE INDEX {{ table_name }}_vessel_id_timestamp ON public.{{ table_name }} (vessel_id, timestamp);
-CREATE INDEX {{ table_name }}_timestamp ON public.{{ table_name }} (timestamp);
-
 -- Ensure we run vacuumming after deleting most of the rows in the table
 VACUUM ANALYZE public.{{ table_name }};

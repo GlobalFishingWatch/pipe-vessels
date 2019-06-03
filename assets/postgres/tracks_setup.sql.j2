@@ -10,9 +10,9 @@ CREATE TABLE IF NOT EXISTS public.{{ table_name }} (
     course real
 );
 
+-- Setup constraints and indices
+CREATE INDEX IF NOT EXISTS {{ table_name }}_vessel_id_timestamp ON public.{{ table_name }} (vessel_id, timestamp);
+CREATE INDEX IF NOT EXISTS {{ table_name }}_timestamp ON public.{{ table_name }} (timestamp);
+
 -- Ensure the table is empty
 DELETE FROM public.{{ table_name }} WHERE timestamp BETWEEN '{{start}}' AND '{{end}}';
-
--- Drop all constraints and indices if they exist
-DROP INDEX IF EXISTS {{ table_name }}_vessel_id_timestamp;
-DROP INDEX IF EXISTS {{ table_name }}_timestamp;
