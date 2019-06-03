@@ -1,112 +1,42 @@
 #standardSQL
-INSERT INTO
-  `{{ dest }}` ( seg_id,
-  seg_start,
-  distinct_point_count,
-  seg_geography,
-  times,
-  scores,
-  speeds,
-  courses )
 WITH
   ########################################################
   # Extract the messages we are going to process
   ########################################################
   messages AS (
   SELECT
-    seg_id,
-    timestamp,
-    lat,
-    lon,
-    ifnull(nnet_score,
-      ifnull(logistic_score,
-        -1)) AS score,
-    ifnull(speed,
-      -1) AS speed,
-    ifnull(course,
-      -1) AS course
+    sv.seg_id,
+    sv.vessel_id,
+    m.timestamp,
+    ST_GEOGPOINT(m.lon, m.lat) AS position,
+    IFNULL(m.nnet_score, m.logistic_score) AS score,
+    m.speed,
+    m.course
   FROM
-    `{{ source }}*`
+    `{{ source }}*` AS m
+  INNER JOIN
+    `{{ segment_info }}` AS si
+  USING
+    (seg_id)
+  INNER JOIN
+    `{{ segment_vessel }}` AS sv
+  USING
+    (seg_id)
   WHERE
-    lat > -90
-    AND lat < 90
-    ),
-  ########################################################
-  # Group messages by their position
-  ########################################################
-  messages_grouped_positions AS (
-  SELECT
-    seg_id,
-    COUNT(seg_id) AS message_count,
-    lat,
-    lon,
-    MIN(timestamp) AS timestamp,
-    MAX(score) AS score,
-    AVG(speed) AS speed,
-    AVG(course) AS course
-  FROM
-    messages
-  GROUP BY
-    seg_id,
-    lat,
-    lon),
-  ########################################################
-  # Concatenate the messages by segment
-  ########################################################
-  segments AS (
-  SELECT
-    seg_id,
-    MIN(timestamp) as seg_start,
-    SUM(message_count) AS message_count,
-    COUNT(seg_id) AS distinct_point_count,
-    # Aggregate positions into a wkt-compatible string
-    STRING_AGG(CONCAT(CAST(lon AS string), ' ', CAST(lat AS string)), ', '
-    ORDER BY
-      timestamp) AS points_wkt,
-    # Aggregate timestamps into a single array
-    ARRAY_AGG(timestamp
-    ORDER BY
-      timestamp) AS times,
-    # Aggregate scores into a single array
-    ARRAY_AGG(score
-    ORDER BY
-      timestamp) AS scores,
-    # Aggregate speeds into a single array
-    ARRAY_AGG(speed
-    ORDER BY
-      timestamp) AS speeds,
-    # Aggregate courses into a single array
-    ARRAY_AGG(course
-    ORDER BY
-      timestamp) AS courses
-  FROM
-    messages_grouped_positions
-  GROUP BY
-    seg_id),
-  ########################################################
-  # Convert the wkt points into actual geography
-  ########################################################
-  segments_with_geography AS (
-  SELECT
-    seg_id,
-    seg_start,
-    message_count,
-    distinct_point_count,
-    times,
-    scores,
-    speeds,
-    courses,
-    ST_GEOGFROMTEXT(CONCAT( 'MULTIPOINT', " (", points_wkt, ')')) AS seg_geography
-  FROM
-    segments )
+    _TABLE_SUFFIX BETWEEN '{{ start_yyyymmdd }}'
+    AND '{{ end_yyyymmdd }}'
+    AND si.noise = false
+    AND si.pos_count > 5
+    AND m.lat IS NOT NULL
+    AND m.lon IS NOT NULL
+    AND sv.vessel_id_rank = 1)
 SELECT
   seg_id,
-  seg_start,
-  distinct_point_count,
-  seg_geography,
-  times,
-  scores,
-  speeds,
-  courses
+  vessel_id,
+  timestamp,
+  position,
+  score,
+  speed,
+  course
 FROM
-  segments_with_geography
+  messages

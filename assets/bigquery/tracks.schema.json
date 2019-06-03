@@ -7,45 +7,39 @@
   },
   {
     "mode": "REQUIRED",
-    "name": "seg_start",
+    "name": "vessel_id",
+    "type": "STRING",
+    "description": "Vessel identifier for the vessel owning the track."
+  },
+  {
+    "mode": "REQUIRED",
+    "name": "timestamp",
     "type": "timestamp",
     "description": "Time when the segment started."
   },
   {
     "mode": "REQUIRED",
-    "name": "distinct_point_count",
-    "type": "INTEGER",
-    "description": "Count of distinct individual messages that are involved in this track."
-  },
-  {
-    "mode": "REQUIRED",
-    "name": "seg_geography",
+    "name": "position",
     "type": "GEOGRAPHY",
-    "description": "MULTIPOINT containing all the latitude and longitude coordinates of this track."
+    "description": "Lat/Lon position of the message, in a geography field."
   },
   {
-    "mode": "REPEATED",
-    "name": "times",
-    "type": "TIMESTAMP",
-    "description": "Array containing all the timestamps on each individual point in this track."
-  },
-  {
-    "mode": "REPEATED",
-    "name": "scores",
+    "mode": "NULLABLE",
+    "name": "score",
     "type": "FLOAT64",
-    "description": "MULTIPOINT containing all the fishing scores of the messages in this track."
+    "description": "Fishing score for the message."
   },
   {
-    "mode": "REPEATED",
-    "name": "speeds",
+    "mode": "NULLABLE",
+    "name": "speed",
     "type": "FLOAT64",
-    "description": "MULTIPOINT containing all the speeds of the messages in this track."
+    "description": "Speed for the message"
   },
   {
-    "mode": "REPEATED",
-    "name": "courses",
+    "mode": "NULLABLE",
+    "name": "course",
     "type": "FLOAT64",
-    "description": "MULTIPOINT containing all the courses of the messages in this track."
+    "description": "Course for the message."
   }
 ]
 
