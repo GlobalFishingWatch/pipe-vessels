@@ -1,22 +1,18 @@
--- Ensure POSTGIS extensions are enabled in this db
-CREATE EXTENSION IF NOT EXISTS postgis;
-CREATE EXTENSION IF NOT EXISTS postgis_topology;
-CREATE EXTENSION IF NOT EXISTS postgis_tiger_geocoder CASCADE;
-
 -- Create base tracks table
 CREATE TABLE IF NOT EXISTS public.{{ table_name }} (
     id bigserial PRIMARY KEY NOT NULL,
     seg_id character varying NOT NULL,
-    seg_geography public.geography(MultiPoint,4326) NOT NULL,
-    times timestamp[] NOT NULL,
-    scores real[] NOT NULL,
-    speeds real[] NOT NULL,
-    courses real[] NOT NULL
+    vessel_id character varying NOT NULL,
+    timestamp timestamp NOT NULL,
+    position public.geography(Point,4326) NOT NULL,
+    score real,
+    speed real,
+    course real
 );
 
--- Ensure the table is empty
-TRUNCATE public.{{ table_name }};
+-- Setup constraints and indices
+CREATE INDEX IF NOT EXISTS {{ table_name }}_vessel_id_timestamp ON public.{{ table_name }} (vessel_id, timestamp);
+CREATE INDEX IF NOT EXISTS {{ table_name }}_timestamp ON public.{{ table_name }} (timestamp);
 
--- Drop all constraints and indices if they exist
-DROP INDEX IF EXISTS {{ table_name }}_seg_id;
-DROP INDEX IF EXISTS {{ table_name }}_seg_geography_gis;
+-- Ensure the table is empty
+DELETE FROM public.{{ table_name }} WHERE timestamp BETWEEN '{{start}}' AND '{{end}}';
