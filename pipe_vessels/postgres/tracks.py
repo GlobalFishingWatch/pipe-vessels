@@ -7,7 +7,7 @@ import csv
 def record_to_row(record):
     return [
         record["seg_id"],
-        record["vessel_id"],
+        ''.join([s.encode('utf-8') for s in record['vessel_id']]),
         record["timestamp"],
         record["position"],
         record.get("score", ""),
