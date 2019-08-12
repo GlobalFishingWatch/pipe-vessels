@@ -37,8 +37,8 @@ for index in ${!ARGS[*]}; do
 done
 
 IFS=, read START_DATE END_DATE <<<"${DATE_RANGE}"
-if [[ -z $END_DATE ]]; then
-  END_DATE=${START_DATE}
+if [ -z $END_DATE ] || [ $END_DATE == $START_DATE ]; then
+  END_DATE=$(date +%Y-%m-%d -d "$START_DATE + 1 day")
 fi
 ################################################################################
 # Extracting the records we need to import to a different temp table
