@@ -30,7 +30,6 @@ fi
 
 echo "Running $0"
 ARG_VALUES=("$@")
-PARAMS=()
 for index in ${!ARGS[*]}; do
   echo "  ${ARGS[$index]}=${ARG_VALUES[$index]}"
   declare "${ARGS[$index]}"="${ARG_VALUES[$index]}"
