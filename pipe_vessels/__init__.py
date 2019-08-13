@@ -2,7 +2,7 @@
 Pipeline for extracting and compiling vessel information
 """
 
-__version__ = '0.0.1'
+__version__ = '1.1.0'
 __author__ = 'Andres Arana'
 __email__ = 'andres@globalfishingwatch.org'
 __source__ = 'https://github.com/GlobalFishingWatch/pipe-vessels'
