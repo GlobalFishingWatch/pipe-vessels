@@ -68,6 +68,7 @@ except Exception as e:
     print "Removing new index {}  as the import process failed".format(
         unique_index_name)
     server.drop_index(unique_index_name)
+    raise
 
 # Remove the old indices
 for old_index in old_indices:

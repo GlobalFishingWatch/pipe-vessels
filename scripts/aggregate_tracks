@@ -6,9 +6,7 @@ THIS_SCRIPT_DIR="$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )"
 ASSETS=${THIS_SCRIPT_DIR}/../assets
 ARGS=( \
   DATE_RANGE \
-  MESSAGES_TABLE \
-  SEGMENT_INFO_TABLE \
-  SEGMENT_VESSEL_TABLE \
+  BIGQUERY_VESSEL_TRACKS_JINJA_QUERY \
   TRACKS_TABLE \
 )
 
@@ -84,13 +82,9 @@ echo "  Deleted existing records in ${TRACKS_TABLE}"
 # Inserting new records
 ################################################################################
 echo "Inserting new records for table ${TRACKS_TABLE}"
-INSERT_SQL=${ASSETS}/bigquery/aggregate-tracks.sql.j2
-jinja2 ${INSERT_SQL} \
-   -D source=${MESSAGES_TABLE//:/.} \
+jinja2 ${BIGQUERY_VESSEL_TRACKS_JINJA_QUERY} \
    -D start_yyyymmdd=$(yyyymmdd ${START_DATE}) \
    -D end_yyyymmdd=$(yyyymmdd ${END_DATE}) \
-   -D segment_info=${SEGMENT_INFO_TABLE//:/.} \
-   -D segment_vessel=${SEGMENT_VESSEL_TABLE//:/.} \
    | bq --headless query \
     -n 0 \
     --destination_table ${TRACKS_TABLE} \

@@ -1,3 +1,7 @@
+# EXAMPLE OF THE AGGREGATED TRACKS QUERY JINJA TEMPLATE
+# IT IS IMPORTANT TO ADD THE {{ start_yyyymmdd }}
+# AND {{ end_yyyymmdd }} variables.
+
 #standardSQL
 WITH
   ########################################################
@@ -13,13 +17,13 @@ WITH
     m.speed,
     m.course
   FROM
-    `{{ source }}*` AS m
+    `MESSAGES_SCORED_TABLE*` AS m
   INNER JOIN
-    `{{ segment_info }}` AS si
+    `SEGMENT_INFO_TABLE` AS si
   USING
     (seg_id)
   INNER JOIN
-    `{{ segment_vessel }}` AS sv
+    `VESSEL_INFO_TABLE` AS sv
   USING
     (seg_id)
   WHERE
