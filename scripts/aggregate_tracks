@@ -90,6 +90,7 @@ jinja2 vessel_tracks_query.j2.sql \
    -D end_yyyymmdd=${END_DATE} \
    | bq --headless query \
     -n 0 \
+    --nouse_legacy_sql \
     --destination_table ${TRACKS_TABLE} \
     --append_table
 if [ "$?" -ne 0 ]; then
