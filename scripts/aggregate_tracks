@@ -82,7 +82,8 @@ echo "  Deleted existing records in ${TRACKS_TABLE}"
 # Inserting new records
 ################################################################################
 echo "Inserting new records for table ${TRACKS_TABLE}"
-jinja2 ${BIGQUERY_VESSEL_TRACKS_JINJA_QUERY} \
+echo "${BIGQUERY_VESSEL_TRACKS_JINJA_QUERY}" > vessel_tracks_query.j2.sql
+jinja2 vessel_tracks_query.j2.sql \
    -D start_yyyymmdd_nodash=$(yyyymmdd ${START_DATE}) \
    -D end_yyyymmdd_nodash=$(yyyymmdd ${END_DATE}) \
    -D start_yyyymmdd=${START_DATE} \

@@ -47,7 +47,7 @@ class VesselsPipelineDagFactory(DagFactory):
                 depends_on_past=True,
                 bash_command='{docker_run} {docker_image} aggregate_tracks '
                 '{date_range} '
-                '{bigquery_vessel_tracks_jinja_query} '
+                '\'{bigquery_vessel_tracks_jinja_query}\' '
                 '{project_id}:{target_dataset}.{bigquery_tracks} '.format(
                     **config)
             )
