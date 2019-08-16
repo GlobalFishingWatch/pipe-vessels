@@ -87,8 +87,8 @@ echo "Inserting new records for table ${TRACKS_TABLE}"
 INSERT_SQL=${ASSETS}/bigquery/aggregate-tracks.sql.j2
 jinja2 ${INSERT_SQL} \
    -D source=${MESSAGES_TABLE//:/.} \
-   -D start_yyyymmdd=$(yyyymmdd ${START_DATE}) \
-   -D end_yyyymmdd=$(yyyymmdd ${END_DATE}) \
+   -D start=${START_DATE} \
+   -D end=${END_DATE} \
    -D segment_info=${SEGMENT_INFO_TABLE//:/.} \
    -D segment_vessel=${SEGMENT_VESSEL_TABLE//:/.} \
    | bq --headless query \
