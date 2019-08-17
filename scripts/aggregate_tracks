@@ -54,8 +54,6 @@ bq --headless mk \
   --force \
   --description "${TABLE_DESC}" \
   --schema ${SCHEMA} \
-  --time_partitioning_field timestamp \
-  --clustering_fields seg_id,vessel_id \
   ${TRACKS_TABLE}
 if [ "$?" -ne 0 ]; then
   echo "  Unable to create table ${TRACKS_TABLE}"
