@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+
+## v2.0.0 
+
 ### Changed
 
 * [GlobalFishingWatch/GFW-Tasks#1116](https://github.com/GlobalFishingWatch/GFW-Tasks/issues/1116):
