@@ -6,9 +6,7 @@ THIS_SCRIPT_DIR="$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )"
 ASSETS=${THIS_SCRIPT_DIR}/../assets
 ARGS=( \
   DATE_RANGE \
-  MESSAGES_TABLE \
-  SEGMENT_INFO_TABLE \
-  SEGMENT_VESSEL_TABLE \
+  BIGQUERY_VESSEL_TRACKS_JINJA_QUERY \
   TRACKS_TABLE \
 )
 
@@ -56,8 +54,6 @@ bq --headless mk \
   --force \
   --description "${TABLE_DESC}" \
   --schema ${SCHEMA} \
-  --time_partitioning_field timestamp \
-  --clustering_fields seg_id,vessel_id \
   ${TRACKS_TABLE}
 if [ "$?" -ne 0 ]; then
   echo "  Unable to create table ${TRACKS_TABLE}"
@@ -84,15 +80,15 @@ echo "  Deleted existing records in ${TRACKS_TABLE}"
 # Inserting new records
 ################################################################################
 echo "Inserting new records for table ${TRACKS_TABLE}"
-INSERT_SQL=${ASSETS}/bigquery/aggregate-tracks.sql.j2
-jinja2 ${INSERT_SQL} \
-   -D source=${MESSAGES_TABLE//:/.} \
-   -D start_yyyymmdd=$(yyyymmdd ${START_DATE}) \
-   -D end_yyyymmdd=$(yyyymmdd ${END_DATE}) \
-   -D segment_info=${SEGMENT_INFO_TABLE//:/.} \
-   -D segment_vessel=${SEGMENT_VESSEL_TABLE//:/.} \
+echo "${BIGQUERY_VESSEL_TRACKS_JINJA_QUERY}" > vessel_tracks_query.j2.sql
+jinja2 vessel_tracks_query.j2.sql \
+   -D start_yyyymmdd_nodash=$(yyyymmdd ${START_DATE}) \
+   -D end_yyyymmdd_nodash=$(yyyymmdd ${END_DATE}) \
+   -D start_yyyymmdd=${START_DATE} \
+   -D end_yyyymmdd=${END_DATE} \
    | bq --headless query \
     -n 0 \
+    --nouse_legacy_sql \
     --destination_table ${TRACKS_TABLE} \
     --append_table
 if [ "$?" -ne 0 ]; then
