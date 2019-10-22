@@ -7,7 +7,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 
 
-## v2.0.0 
+## v2.1.0 - 2019-10-22
+
+### Added
+
+* [GlobalFishingWatch/GFW-Tasks#1138](https://github.com/GlobalFishingWatch/GFW-Tasks/issues/1138): Adds
+    a FlexibleOperator to change from bash to kubernetes operations.
+
+## v2.0.0 - 2019-09-20
 
 ### Changed
 
@@ -18,14 +25,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   
 **NOTE** Moving to 2.0.0 since this will not work with previous 1.X
 
-## v1.1.0 
+## v1.1.0 - 2019-08-23
 
 * [GlobalFishingWatch/GFW-Tasks#1113](https://github.com/GlobalFishingWatch/GFW-Tasks/issues/1113):
  * Fixes time range when running daily mode.
  * Upgrades google SDK TO 255.0.0
  * Fixes Python version to 2.7 Strech
 
-## v1.0.0 
+## v1.0.0 - 2019-06-04
 
 ### Added
 
