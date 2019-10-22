@@ -69,7 +69,7 @@ class VesselsPipelineDagFactory(DagFactory):
             publish_postgres_tracks_params = {
                 'task_id':'publish_postgres_tracks_{}'.format(name),
                 'depends_on_past':True,
-                'pool':'k8operators_limit',
+                'pool':'k8operators_limit' if flexible_operator_var == 'kubernetes' else 'bigquery',
                 'docker_run':'{docker_run}'.format(**config),
                 'image':'{docker_image}'.format(**config),
                 'name':'pipe-vessels-publish-postgres-tracks-{}'.format(name),
