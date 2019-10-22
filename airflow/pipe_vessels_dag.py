@@ -41,13 +41,13 @@ class VesselsPipelineDagFactory(DagFactory):
                 'name':'pipe-vessels-publish-vessel-info-{}'.format(name),
                 'dag':dag,
                 'arguments':['publish_vessel_info',
-                             '\'{bigquery_vessel_info_query}\''.format(**config),
+                             '{bigquery_vessel_info_query}'.format(**config),
                              '{project_id}:{temp_dataset}'.format(**config),
                              '{temp_bucket}'.format(**config),
                              '{elasticsearch_server_url}'.format(**config),
                              '{elasticsearch_server_auth}'.format(**config),
                              '{elasticsearch_index_alias}'.format(**config),
-                             '\'{elasticsearch_index_mappings}\''.format(**config)]
+                             '{elasticsearch_index_mappings}'.format(**config)]
             }
             publish_vessel_info = FlexibleOperator(publish_vessel_info_params).build_operator(flexible_operator_var)
 
@@ -61,7 +61,7 @@ class VesselsPipelineDagFactory(DagFactory):
                 'dag':dag,
                 'arguments':['aggregate_tracks',
                              '{date_range}'.format(**config),
-                             '\'{bigquery_vessel_tracks_jinja_query}\''.format(**config),
+                             '{bigquery_vessel_tracks_jinja_query}'.format(**config),
                              '{project_id}:{target_dataset}.{bigquery_tracks}'.format(**config)]
             }
             aggregate_tracks = FlexibleOperator(aggregate_tracks_params).build_operator(flexible_operator_var)
