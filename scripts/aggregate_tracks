@@ -41,7 +41,6 @@ fi
 ################################################################################
 TABLE_DESC=(
   "* Pipeline: ${PIPELINE} ${PIPELINE_VERSION}"
-  "* Sources: ${MESSAGES_TABLE} ${SEGMENT_INFO_TABLE} ${SEGMENT_VESSEL_TABLE}"
   "* Command:"
   "$(basename $0)"
   "$@"
@@ -86,8 +85,6 @@ jinja2 vessel_tracks_query.j2.sql \
    -D end_yyyymmdd_nodash=$(yyyymmdd ${END_DATE}) \
    -D start_yyyymmdd=${START_DATE} \
    -D end_yyyymmdd=${END_DATE} \
-   -D segment_info=${SEGMENT_INFO_TABLE//:/.} \
-   -D segment_vessel=${SEGMENT_VESSEL_TABLE//:/.} \
    | bq --headless query \
     -n 0 \
     --nouse_legacy_sql \
