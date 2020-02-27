@@ -1,13 +1,13 @@
 """Utility classes for accessing elastc search through it's HTTP API"""
 
-import httplib
+import http.client
 import base64
 import json
 
 
 class ElasticSearchServer:
     def __init__(self, server_url, server_auth):
-        self.connection = httplib.HTTPSConnection(server_url)
+        self.connection = http.client.HTTPSConnection(server_url)
         self.auth_header = {
             'authorization': 'Basic {}'.format(base64.b64encode(server_auth))
         }

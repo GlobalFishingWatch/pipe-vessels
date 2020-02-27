@@ -4,15 +4,15 @@
 Setup script for pipe-vessels
 """
 
-import codecs
-import os
+from distutils.command.build import build as _build
 
-import setuptools
 from setuptools import find_packages
 from setuptools import setup
 
+import codecs
+import os
+import setuptools
 import subprocess
-from distutils.command.build import build as _build
 
 
 package = __import__('pipe_vessels')
@@ -25,7 +25,7 @@ DEPENDENCIES = [
     "pytz",
     "udatetime",
     "newlinejson",
-    "pipe-tools==2.0.0",
+    "pipe-tools==3.1.0",
     "jinja2-cli",
     "statistics"
 ]
