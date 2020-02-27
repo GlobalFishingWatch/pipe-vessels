@@ -27,7 +27,8 @@ DEPENDENCIES = [
     "newlinejson",
     "pipe-tools==3.1.0",
     "jinja2-cli",
-    "statistics"
+    "statistics",
+    "pyopenssl"
 ]
 
 with codecs.open('README.md', encoding='utf-8') as f:
