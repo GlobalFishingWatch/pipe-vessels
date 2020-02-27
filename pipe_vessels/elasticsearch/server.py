@@ -9,7 +9,7 @@ class ElasticSearchServer:
     def __init__(self, server_url, server_auth):
         self.connection = http.client.HTTPSConnection(server_url)
         self.auth_header = {
-            'authorization': 'Basic {}'.format(base64.b64encode(server_auth))
+            'authorization': 'Basic {}'.format(base64.b64encode(server_auth.encode('ascii')).decode('ascii'))
         }
 
     def create_index(self, name, schema):
