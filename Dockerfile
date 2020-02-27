@@ -4,6 +4,8 @@ FROM python:3.7
 RUN mkdir -p /opt/project
 WORKDIR /opt/project
 
+RUN apt-get update && apt-get install openssl -y
+
 # Install and update pip
 # Pin the version because pip>=10.0 does not support the --download flag  which is required for dataflow
 RUN pip install -U --ignore-installed pip==9.0.3
