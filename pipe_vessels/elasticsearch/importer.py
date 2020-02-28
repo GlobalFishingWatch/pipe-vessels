@@ -11,7 +11,7 @@ from pipe_vessels.elasticsearch.server import ElasticSearchServer
 
 def batch(iterable, size):
     args = [iter(iterable)] * size
-    return it.izip_longest(*args)
+    return it.zip_longest(*args)
 
 def line_to_elasticsearch_bulk_command(line):
     record = json.loads(line)
@@ -46,14 +46,14 @@ server.create_index(unique_index_name, index_schema)
 
 try:
     # Process the records in batches
-    bulk_commands = it.imap(
-        line_to_elasticsearch_bulk_command, iter(sys.stdin))
+    bulk_commands = list(map(
+        line_to_elasticsearch_bulk_command, iter(sys.stdin)))
     batched_commands = batch(bulk_commands, 5000)
 
     # For each batch, push it as a bulk payload
     for batch in batched_commands:
         print("Indexing batch")
-        server.bulk(it.ifilter(lambda x: x is not None, batch))
+        server.bulk(filter(lambda x: x is not None, batch))
 
     # Update the alias to point to the new index
     print(("Updating index alias which was pointing to {} to point to the new index {}".format(
