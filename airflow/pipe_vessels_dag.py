@@ -1,11 +1,9 @@
 from airflow import DAG
 from airflow.models import Variable
 from airflow.models import Variable
-from airflow.operators.bash_operator import BashOperator
 
 from airflow_ext.gfw import config as config_tools
 from airflow_ext.gfw.models import DagFactory
-from airflow_ext.gfw.operators.helper.flexible_operator import FlexibleOperator
 
 from datetime import datetime, timedelta
 
@@ -32,7 +30,7 @@ class VesselsPipelineDagFactory(DagFactory):
             name = config['name']
             flexible_operator_var = Variable.get('FLEXIBLE_OPERATOR')
 
-            publish_vessel_info_params = {
+            publish_vessel_info = self.build_docker_task({
                 'task_id':'publish_vessel_info_{}'.format(name),
                 'depends_on_past':True,
                 'pool':'k8operators_limit' if flexible_operator_var == 'kubernetes' else 'bigquery',
@@ -48,10 +46,9 @@ class VesselsPipelineDagFactory(DagFactory):
                              '{elasticsearch_server_auth}'.format(**config),
                              '{elasticsearch_index_alias}'.format(**config),
                              '{elasticsearch_index_mappings}'.format(**config)]
-            }
-            publish_vessel_info = FlexibleOperator(publish_vessel_info_params).build_operator(flexible_operator_var)
+            })
 
-            aggregate_tracks_params = {
+            aggregate_tracks = self.build_docker_task({
                 'task_id':'aggregate_tracks_{}'.format(name),
                 'depends_on_past':True,
                 'pool':'k8operators_limit' if flexible_operator_var == 'kubernetes' else 'bigquery',
@@ -63,10 +60,9 @@ class VesselsPipelineDagFactory(DagFactory):
                              '{date_range}'.format(**config),
                              '{bigquery_vessel_tracks_jinja_query}'.format(**config),
                              '{project_id}:{target_dataset}.{bigquery_tracks}'.format(**config)]
-            }
-            aggregate_tracks = FlexibleOperator(aggregate_tracks_params).build_operator(flexible_operator_var)
+            })
 
-            publish_postgres_tracks_params = {
+            publish_postgres_tracks = self.build_docker_task({
                 'task_id':'publish_postgres_tracks_{}'.format(name),
                 'depends_on_past':True,
                 'pool':'k8operators_limit' if flexible_operator_var == 'kubernetes' else 'bigquery',
@@ -82,8 +78,7 @@ class VesselsPipelineDagFactory(DagFactory):
                              '{postgres_instance}'.format(**config),
                              '{postgres_connection_string}'.format(**config),
                              '{postgres_table_tracks}'.format(**config)]
-            }
-            publish_postgres_tracks = FlexibleOperator(publish_postgres_tracks_params).build_operator(flexible_operator_var)
+            })
 
 
             check_source_existance = config.get('check_source_existance', None)

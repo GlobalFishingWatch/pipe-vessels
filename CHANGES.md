@@ -7,6 +7,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 
 
+## v3.0.0 - 2020-02-29
+
+### Added
+
+* [GlobalFishingWatch/gfw-eng-tasks#17](https://github.com/GlobalFishingWatch/gfw-eng-tasks/issues/17): Adds
+    support for python 3 and add pipe-tools:v3.1.0
+
 ## v2.1.0 - 2019-10-22
 
 ### Added
