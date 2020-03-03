@@ -28,5 +28,5 @@ with open(output_file, "wb+") as f:
             row = record_to_row(record)
             writer.writerow(row)
         except:
-            print("Unable to convert record to csv row at {}".format(record))
+            print(("Unable to convert record to csv row at {}".format(record)))
             raise
