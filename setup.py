@@ -21,11 +21,11 @@ package = __import__('pipe_vessels')
 DEPENDENCIES = [
     "pytest",
     "nose",
-    "ujson",
+    "ujson==1.35",
     "pytz",
     "udatetime",
     "newlinejson",
-    "pipe-tools==3.1.0",
+    "pipe-tools==3.1.1",
     "jinja2-cli",
     "statistics",
     "pyopenssl"

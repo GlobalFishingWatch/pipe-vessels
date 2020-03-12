@@ -7,6 +7,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 
 
+## v3.0.1 - 2020-03-12
+
+### Changed
+
+* [GlobalFishingWatch/gfw-eng-tasks#17](https://github.com/GlobalFishingWatch/gfw-eng-tasks/issues/17): Changes
+    ujson library pin to version `1.35`.
+    pipe-tools points to `v3.1.1`.
+
 ## v3.0.0 - 2020-02-29
 
 ### Added
