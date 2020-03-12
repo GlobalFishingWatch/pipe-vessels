@@ -83,7 +83,8 @@ class VesselsPipelineDagFactory(DagFactory):
 
             check_source_existance = config.get('check_source_existance', None)
             if (check_source_existance is not None or not check_source_existance):
-                dag >> aggregate_tracks
+                if aggregate_tracks is not None:
+                    dag >> aggregate_tracks
                 dag >> publish_vessel_info
             else:
                 source_sensors = self.source_table_sensors(dag)
