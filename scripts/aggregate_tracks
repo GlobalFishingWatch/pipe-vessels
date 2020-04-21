@@ -41,7 +41,6 @@ fi
 ################################################################################
 TABLE_DESC=(
   "* Pipeline: ${PIPELINE} ${PIPELINE_VERSION}"
-  "* Sources: ${MESSAGES_TABLE} ${SEGMENT_INFO_TABLE} ${SEGMENT_VESSEL_TABLE}"
   "* Command:"
   "$(basename $0)"
   "$@"
