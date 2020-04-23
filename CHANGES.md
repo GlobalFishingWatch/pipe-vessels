@@ -7,6 +7,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 
 
+## v3.1.0 - 2020-04-21
+
+### Changed
+
+* [GlobalFishingWatch/gfw-eng-tasks#65](https://github.com/GlobalFishingWatch/gfw-eng-tasks/issues/65): Changes
+  * Fixes improves the performance of track queries by adding physical clustering
+    on the tracks table.
+  * Also removes some deprecated messages we were echoing
+    on stdout. We are no longer sending in the `segment_vessel` and
+    `segment_info` tables now that the tracks aggregation query is
+    parametrizable, so no need to have the source echo empty values there.
+
 ## v3.0.1 - 2020-03-12
 
 ### Changed
@@ -52,7 +64,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Added
 
 * [GlobalFishingWatch/GFW-Tasks#887](https://github.com/GlobalFishingWatch/GFW-Tasks/issues/887):
- * Adds a new task which exports the vessel information data into an elastic search index. This requires some additional configuration settings to point the pipeline to the ElasticSearch server, and to setup the query that generates the information to import to ElasticSearch. Check the [README.md](README.md#Configuration) for more information.
+   Adds a new task which exports the vessel information data into an elastic
+   search index. This requires some additional configuration settings to point
+   the pipeline to the ElasticSearch server, and to setup the query that
+   generates the information to import to ElasticSearch. Check the
+   [README.md](README.md#Configuration) for more information.
 
 * [GlobalFishingWatch/GFW-Tasks#958](https://github.com/GlobalFishingWatch/GFW-Tasks/issues/958):
  * Adds vessel track aggregation steps to the pipeline.
@@ -60,4 +76,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Changed
 
 * [GlobalFishingWatch/GFW-Tasks#985](https://github.com/GlobalFishingWatch/GFW-Tasks/issues/985):
- * Changes the way the tracks are published to postgres. They are now published to a single table, we no longer need a separate tracks and vessel table, and the individual, unaggregated points are stored instead of the old accumulated track record. This also makes this pipeline run for the given dates only.
+   Changes the way the tracks are published to postgres. They are now published
+   to a single table, we no longer need a separate tracks and vessel table, and
+   the individual, unaggregated points are stored instead of the old
+   accumulated track record. This also makes this pipeline run for the given
+   dates only.
