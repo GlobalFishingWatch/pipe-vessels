@@ -7,6 +7,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 
 
+## v3.1.1 - 2020-04-30
+
+### Removed
+
+* [GlobalFishingWatch/gfw-eng-tasks#75](https://github.com/GlobalFishingWatch/gfw-eng-tasks/issues/75): Removes
+  * unused libraries such as `nose`, `pytz`, `udatetime` and `statistics`.
+
+### Changed
+
+* [GlobalFishingWatch/gfw-eng-tasks#75](https://github.com/GlobalFishingWatch/gfw-eng-tasks/issues/75): Changes
+  * to last google sdk `290.0.1`
+  * reduce pod name. now are limted to 63 chars.
+
 ## v3.1.0 - 2020-04-21
 
 ### Changed
