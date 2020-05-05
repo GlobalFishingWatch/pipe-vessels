@@ -18,7 +18,7 @@ def record_to_row(record):
 
 input_stream = sys.stdin
 output_file = sys.argv[1]
-with open(output_file, "wb+") as f:
+with open(output_file, "w", newline="") as f:
     writer = csv.writer(f)
 
     for line in input_stream:
