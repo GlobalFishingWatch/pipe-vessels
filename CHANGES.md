@@ -7,6 +7,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 
 
+## v3.1.1 - 2020-04-30
+
+### Removed
+
+* [GlobalFishingWatch/gfw-eng-tasks#75](https://github.com/GlobalFishingWatch/gfw-eng-tasks/issues/75): Removes
+  * unused libraries such as `nose`, `pytz`, `udatetime` and `statistics`.
+
+### Changed
+
+* [GlobalFishingWatch/gfw-eng-tasks#75](https://github.com/GlobalFishingWatch/gfw-eng-tasks/issues/75): Changes
+  * to last google sdk `290.0.1`
+  * reduce pod name. now are limted to 63 chars.
+
+* [GlobalFishingWatch/gfw-eng-tasks#83](https://github.com/GlobalFishingWatch/gfw-eng-tasks/issues/83): Changes
+  * the syntax used to index the data in tracks over postgres to fix the publish_to_postgres task.
+
 ## v3.1.0 - 2020-04-21
 
 ### Changed
@@ -49,7 +65,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   * Removed the time partition and clustering from tracks since it can't handle more than 2000 partitions.
   * Removed the Fixed query from messages_scored and now support a query through parameters.
   * Change version of pipe-tools from 0.2.0 to 2.0.0
-  
+
 **NOTE** Moving to 2.0.0 since this will not work with previous 1.X
 
 ## v1.1.0 - 2019-08-23
