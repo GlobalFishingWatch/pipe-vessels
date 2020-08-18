@@ -8,10 +8,10 @@ import ssl
 
 class ElasticSearchServer:
     def __init__(self, server_url, server_auth):
-        # Minimum version protocol for python3.7 is TLSVersion.TLSv1_2 and server supports TLSVersion.TLSv1
-        self.connection = http.client.HTTPSConnection(server_url, context=ssl.SSLContext(ssl.PROTOCOL_TLSv1))
+        self.connection = http.client.HTTPSConnection(server_url, context=ssl.SSLContext(ssl.PROTOCOL_TLS))
         self.auth_header = {
-            'authorization': 'Basic {}'.format(base64.b64encode(server_auth.encode('ascii')).decode('ascii'))
+            'authorization': 'Basic {}'.format(base64.b64encode(server_auth.encode('ascii')).decode('ascii')),
+            'Content-Type': 'application/json'
         }
 
     def create_index(self, name, schema):
@@ -36,6 +36,7 @@ class ElasticSearchServer:
         lines = [json.dumps(entry)
                  for command in commands for entry in command]
         chunk = "\n".join(lines)
+        chunk += "\n"
         octects = chunk.encode('utf-8')
         url = '/_bulk'
         self.connection.request("POST", url, octects, self.auth_header)
@@ -43,7 +44,7 @@ class ElasticSearchServer:
         body = response.read()
         if response.status != 200:
             raise RuntimeError(
-                'Elastic Search bulk API returned wrong status code {}'.format(response.status))
+                'Elastic Search bulk API returned wrong status code {} body {}'.format(response.status, body))
 
         result = json.loads(body)
         if result['errors']:

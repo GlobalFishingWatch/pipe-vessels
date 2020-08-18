@@ -16,7 +16,7 @@ def batch(iterable, size):
 def line_to_elasticsearch_bulk_command(line):
     record = json.loads(line)
     command = {"index": {"_index": unique_index_name,
-                         "_type": "vessel", "_id": record["vesselId"]}}
+                         "_id": record["vesselId"]}}
     return [command, record]
 
 
