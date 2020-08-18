@@ -7,6 +7,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 
 
+## v3.0.1-HOTFIX-1 - 2020-08-18
+
+### Added
+
+* [Engineering Incubator and chores/ENG-90](https://globalfishingwatch.atlassian.net/browse/ENG-90): Adds
+  * support for ES7.
+
 ## v3.0.1 - 2020-03-12
 
 ### Changed

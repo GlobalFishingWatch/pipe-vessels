@@ -2,7 +2,7 @@
 Pipeline for extracting and compiling vessel information
 """
 
-__version__ = '3.0.1'
+__version__ = '3.0.1-HOTFIX-1'
 __author__ = 'Andres Arana'
 __email__ = 'andres@globalfishingwatch.org'
 __source__ = 'https://github.com/GlobalFishingWatch/pipe-vessels'
