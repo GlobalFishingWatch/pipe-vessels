@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## v3.1.2 - 2020-08-18
+
+### Changed
+
+* [Engeneering Incubator and chores/ENG-90](https://globalfishingwatch.atlassian.net/browse/ENG-90): Changes
+    * to remove mapping type and support ES7
 
 ## v3.1.1 - 2020-04-30
 
