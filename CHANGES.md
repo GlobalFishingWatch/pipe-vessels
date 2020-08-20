@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## v3.1.2 - 2020-08-18
+
+### Added
+
+* [Engeneering Incubator and chores/ENG-90](https://globalfishingwatch.atlassian.net/browse/ENG-90): Adds
+  * ES7 support.
+  * Uses protocol TLS to connect to ES.
+  * Uses mandatory content-type to avoid 406 error.
+  * Removes the mapping types.
 
 ## v3.1.1 - 2020-04-30
 
